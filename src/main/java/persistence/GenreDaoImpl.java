@@ -38,7 +38,7 @@ public class GenreDaoImpl extends MySQLDao implements IGenreDao{
 
             con = getConnection();
 
-            String query = "SELECT * FROM genre where id = ?";
+            String query = "SELECT * FROM genre where genre_id = ?";
             ps = con.prepareStatement(query);
             ps.setInt(1, id);
             rs = ps.executeQuery();

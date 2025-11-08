@@ -4,6 +4,7 @@ package service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import model.Album;
 import model.Artist;
 import model.User;
 import network.TCPNetworkLayer;
@@ -27,18 +28,21 @@ public class TCPServer implements Runnable {
 
     private GenreDaoImpl genreDao;
 
+    private AlbumDaoImpl albumDao;
+
     private static String username;
 
     private final Gson gson = new Gson();
 
 
-    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, ArtistDaoImpl artistDao, GenreDaoImpl genreDao,  String username) throws IOException {
+    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, ArtistDaoImpl artistDao, GenreDaoImpl genreDao, AlbumDaoImpl albumDao,  String username) throws IOException {
         this.clientDataSocket = clientDataSocket;
         this.networkLayer = new TCPNetworkLayer(clientDataSocket);
 
         this.userDao = userDao;
         this.artistDao = artistDao;
         this.genreDao = genreDao;
+        this.albumDao = albumDao;
         this.username = username;
     }
 
@@ -79,6 +83,12 @@ public class TCPServer implements Runnable {
                             break;
                         case UserUtilities.SEARCH_FOR_ARTIST:
                             jsonResponse = searchForArtist(loginStatus, jsonRequest, artistDao);
+                            break;
+                        case UserUtilities.GET_ALL_ALBUM:
+                            jsonResponse = getAllAlbum(loginStatus, albumDao);
+                            break;
+                        case UserUtilities.SEARCH_FOR_ALBUM:
+                            jsonResponse = searchForAlbum(loginStatus, jsonRequest, albumDao);
                             break;
                         case UserUtilities.LOGOUT:
                             jsonResponse = createStatusResponse(UserUtilities.GOODBYE, username+ " logged out of the system");
@@ -308,6 +318,79 @@ public class TCPServer implements Runnable {
     }
 
 
+
+    private JsonObject getAllAlbum(boolean loginStatus, IAlbumDao albumDao) {
+        JsonObject jsonResponse;
+        if (!loginStatus) {
+            ArrayList<Album> allAlbum = albumDao.getAllAlbums();
+
+            if (!allAlbum.isEmpty()) {
+                if (allAlbum != null) {
+                    jsonResponse = serializeAlbum(allAlbum);
+                    log.info("All Artist retrieved all there emails ", username);
+
+                } else {
+                    jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                }
+            } else {
+                jsonResponse = createStatusResponse(UserUtilities.YOU_HAVE_NO_ALBUMS, "Theres no albums");
+                log.info("Theres no artist to retrieve ", username);
+            }
+        } else {
+            jsonResponse = createStatusResponse(UserUtilities.NOT_LOGGED_IN, "Not logged in");
+            log.info("{} is not logged in", username);
+
+        }
+        return jsonResponse;
+    }
+
+
+
+
+    private JsonObject searchForAlbum(boolean loginStatus, JsonObject jsonRequest, IAlbumDao albumDao) {
+        JsonObject jsonResponse;
+        if (!loginStatus) {
+
+            JsonObject payload = (JsonObject) jsonRequest.get("payload");
+            if (payload.size() == 1) {
+                String album = payload.get("album").getAsString();
+
+                ArrayList<Album> albumForSearch = albumDao.searchForAlbumByAlbumName(album);
+
+                if (!album.isEmpty()) {
+                    if (album != null) {
+                        if (!albumForSearch.isEmpty()) {
+                            if (albumForSearch != null) {
+                                jsonResponse = serializeAlbum(albumForSearch);
+                                log.info("User {} searched for album with name {} ", username, album);
+                            } else {
+                                jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                            }
+                        } else {
+                            jsonResponse = createStatusResponse(UserUtilities.NO_ALBUMS_WITH_THIS_NAME, "No album found");
+                            log.info("User {} searched for album with name {} but there is no album ", username, album);
+
+                        }
+                    }else{
+                        jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                    }
+                }else{
+                    jsonResponse = createStatusResponse(UserUtilities.EMPTY_ALBUM_NAME, "Album name was left empty");
+                }
+
+            } else {
+                jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+            }
+        } else {
+            jsonResponse = createStatusResponse(UserUtilities.NOT_LOGGED_IN, "Not logged in");
+            log.info("{} is not logged in", username);
+        }
+        return jsonResponse;
+    }
+
+
+
+
     public JsonObject serializeArtist(ArrayList<Artist> artists) {
         JsonObject jsonResponse = null;
 
@@ -324,13 +407,43 @@ public class TCPServer implements Runnable {
         if (m == null) {
             throw new IllegalArgumentException("Cannot serialise null Movie");
         }
-        return "ID: " + m.getArtist_id() + UserUtilities.ARTIST_DELIMITER + "Name: " + m.getArtist_name() + UserUtilities.ARTIST_DELIMITER + "Genre: " + genreDao.getGenreNameById(m.getGenre_id()) + UserUtilities.ARTIST_DELIMITER +  "Date: " + m.getDate_of_birth();
+        return "Name: " + m.getArtist_name() + UserUtilities.ARTIST_DELIMITER + "Genre: " + genreDao.getGenreNameById(m.getGenre_id()) + UserUtilities.ARTIST_DELIMITER +  "Date: " + m.getDate_of_birth();
     }
 
     private JsonObject createStatusResponse2(String status, String artists) {
         JsonObject invalidResponse = new JsonObject();
         invalidResponse.addProperty("status", status);
         invalidResponse.addProperty("artists", artists);
+        return invalidResponse;
+    }
+
+
+    // album serilization
+
+
+    public JsonObject serializeAlbum(ArrayList<Album> albums) {
+        JsonObject jsonResponse = null;
+
+        StringJoiner joiner = new StringJoiner(UserUtilities.ARTIST_DELIMITER2);
+
+        for (Album a : albums) {
+            joiner.add(serializeAlbum(a));
+            jsonResponse = createStatusResponse3(UserUtilities.ALBUMS_RETRIEVED_SUCCESSFULLY, joiner.toString());
+        }
+        return jsonResponse;
+    }
+
+    public String serializeAlbum(Album m) {
+        if (m == null) {
+            throw new IllegalArgumentException("Cannot serialise null Album");
+        }
+        return "Name: " + m.getAlbum_name() + UserUtilities.ARTIST_DELIMITER + "Artist: " + artistDao.getArtistNameById(m.getArtist_id()) + UserUtilities.ARTIST_DELIMITER + "Description: " + m.getDescription() + UserUtilities.ARTIST_DELIMITER +  "Release Date: " + m.getDate_of_release();
+    }
+
+    private JsonObject createStatusResponse3(String status, String albums) {
+        JsonObject invalidResponse = new JsonObject();
+        invalidResponse.addProperty("status", status);
+        invalidResponse.addProperty("albums", albums);
         return invalidResponse;
     }
 }

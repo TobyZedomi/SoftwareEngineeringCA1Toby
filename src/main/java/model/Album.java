@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Builder
 public class Album {
     private int album_id;
+    private String album_name;
     private int artist_id;
     private String description;
     private LocalDate date_of_release;

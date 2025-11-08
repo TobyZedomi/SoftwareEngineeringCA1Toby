@@ -15,3 +15,11 @@ VALUES (1, 'Kendrick Lamar', 1, 'Kendrick Lamar is an American rapper, singer, s
        (2, 'Jimi Hendrix', 2, ' Hendrix was an American guitarist, singer, and songwriter', '1957-04-11'),
        (3, 'Nas', 1, 'Nas, is an American rapper and entrepreneur.', '1975-02-16'),
        (4, 'Taylor Swift', 3, 'Taylor Swift is an American singer-songwriter.', '1989-02-16');
+
+
+INSERT INTO `album` (`album_id`, `album_name`, `artist_id`, `description`, `date_of_release`)
+VALUES (1, 'To Pimp A Butterfly', 1, 'Modern Day Classic', '2015-03-16'),
+       (2, 'DAMN', 1, 'Changed Hip Hop', '2017-05-22'),
+       (3, 'Electric Ladyland', 2, 'Some say the Greatest album ever', '1967-10-16'),
+       (4, 'Illmatic', 3, 'Everything perfect about Hip Hop', '1994-04-10'),
+       (5, 'Red', 4, 'Perfect Pop Album', '2012-10-10');

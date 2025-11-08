@@ -17,6 +17,12 @@ public class AuthUtils {
 
     public static final String SEARCH_FOR_ARTIST = "SEARCH_FOR_ARTIST";
 
+    public static final String GET_ALL_ALBUM = "GET_ALL_ALBUM";
+
+    public static final String SEARCH_FOR_ALBUM = "SEARCH_FOR_ALBUM";
+
+
+
     public static final String GET_CONTENT_RECEIVED_EMAILS = "GET_CONTENT_RECEIVED_EMAILS";
     public static final String GET_CONTENT_SENT_EMAIL = "GET_CONTENT_SENT_EMAIL";
 
@@ -43,6 +49,14 @@ public class AuthUtils {
     public static final String NOT_LOGGED_IN =   "{\"status\":\"NOT_LOGGED_IN\",\"message\":\"Not logged in\"}";
     public static final String EMPTY_ARTIST_NAME =   "{\"status\":\"EMPTY_ARTIST_NAME\",\"message\":\"Artist name was left empty\"}";
     public static final String EMAIL_ID_LESS_THAN_1 =   "{\"status\":\"EMAIL_ID_LESS_THAN_1\",\"message\":\"Email id cant be less than 1\"}";
+
+    public static final String YOU_HAVE_NO_ALBUMS =   "{\"status\":\"YOU_HAVE_NO_ALBUMS\",\"message\":\"Theres no albums\"}";
+
+    public static final String NO_ALBUMS_WITH_THIS_NAME = "{\"status\":\"NO_ALBUMS_WITH_THIS_NAME\",\"message\":\"No album found\"}";
+
+
+    public static final String EMPTY_ALBUM_NAME =   "{\"status\":\"EMPTY_ALBUM_NAME\",\"message\":\"Album name was left empty\"}";
+
 
     /// Delimiter
     public static final String DELIMITER = "%%";
