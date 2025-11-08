@@ -27,6 +27,12 @@ public class TCPGUIClient {
     static JFrame f1;
 
 
+    static JFrame fViewAlbum;
+
+    static JFrame fViewSearchAlbum;
+
+
+
     //lists
     static JList b;
 
@@ -72,12 +78,22 @@ public class TCPGUIClient {
     private JButton goBackToArtistPage;
 
 
+    private JButton goBackToAlbumPage;
+
+
+
     private JButton sendEmail;
 
 
     private JButton allArtist;
 
+    private JButton allAlbum;
+
+
     private JButton searchForArtist;
+
+    private JButton searchForAlbum;
+
 
     private JButton getContentOfReceivedEmails;
 
@@ -141,6 +157,11 @@ public class TCPGUIClient {
     private JLabel artistSearchLabel;
 
     private JTextField artistSearchTextField;
+
+
+    private JLabel albumSearchLabel;
+
+    private JTextField albumSearchTextField;
 
     // get content of retrieved emails based on email Id
 
@@ -352,6 +373,18 @@ public class TCPGUIClient {
         });
 
 
+        // View All Albums in the system
+
+        allAlbum = new JButton("View All Albums");
+        // Specify what the button should DO when clicked:
+        allAlbum.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                allAlbumView();
+            }
+        });
+
+
         // logout
 
         logOut = new JButton("Log Out");
@@ -369,8 +402,9 @@ public class TCPGUIClient {
 
         homePageView.add(allArtist, getGridBagConstraints(0, 2, 2));
 
+        homePageView.add(allAlbum, getGridBagConstraints(0, 3, 2));
 
-        homePageView.add(logOut, getGridBagConstraints(0, 3, 2));
+        homePageView.add(logOut, getGridBagConstraints(0, 4, 2));
     }
 
     private void showInitialView(){
@@ -772,6 +806,12 @@ public class TCPGUIClient {
         f.show();
     }
 
+    private void goBackToAlbumPageAfterSearch(){
+
+        fViewSearchAlbum.dispose();
+        fViewAlbum.show();
+    }
+
     private void setRegisterButton(){
         String username = usernameTextField1.getText();
         String password = passwordTextField1.getText();
@@ -928,6 +968,99 @@ public class TCPGUIClient {
     }
 
 
+    private void allAlbumView(){
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.GET_ALL_ALBUM);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+
+        if (response.equalsIgnoreCase(AuthUtils.INVALID) || response.equalsIgnoreCase(AuthUtils.YOU_HAVE_NO_ALBUMS) || response.equalsIgnoreCase(AuthUtils.NOT_LOGGED_IN)){
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "Retrieve Albums failed",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        }else {
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("albums").getAsString();
+
+            String[] artists = result.split("##");
+
+            //create a new frame
+            fViewAlbum = new JFrame("frame");
+
+            //create a panel
+            JPanel p =new JPanel();
+
+            albumSearchLabel = new JLabel("Album Name: ");
+            albumSearchTextField = new JTextField(15);
+
+            searchForAlbum = new JButton("Search for Album");
+            // Specify what the button should DO when clicked:
+            searchForAlbum.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchForAlbum();
+                }
+            });
+
+            p.add(albumSearchLabel, getGridBagConstraints(0, 1, 2));
+            p.add(albumSearchTextField, getGridBagConstraints(1, 1, 2));
+            p.add(searchForAlbum, getGridBagConstraints(0, 2, 2));
+
+
+
+            artistListLabel = new JLabel("List of all artist in the system");
+            p.add(artistListLabel, getGridBagConstraints(0, 3, 2));
+
+            String [] artistArray = grow(artists, artists.length);
+            b = new JList(artistArray);
+            b.setSelectedIndex(0);
+            p.add(b);
+            fViewAlbum.add(p);
+            fViewAlbum.setSize(500,400);
+
+            goBackToHomePage = new JButton("Go Back To Home Page");
+            // Specify what the button should DO when clicked:
+            goBackToHomePage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToHomePageEmailList();
+                }
+            });
+
+            p.add(goBackToHomePage, getGridBagConstraints(0, 4, 2));
+
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 5, 2));
+            fViewAlbum.show();
+
+        }
+
+    }
+
+
 
 
     private void searchForArtist(){
@@ -1021,8 +1154,104 @@ public class TCPGUIClient {
             artistSearchTextField.setText("");
 
         }
+    }
+
+
+
+    private void searchForAlbum(){
+
+        String album = albumSearchTextField.getText();
+
+        JsonObject payload = new JsonObject();
+        payload.addProperty("album", album);
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.SEARCH_FOR_ALBUM);
+        requestJson.add("payload", payload);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+        if (response.equals(AuthUtils.NO_ALBUMS_WITH_THIS_NAME) || response.equals(AuthUtils.INVALID) || response.equals(AuthUtils.EMPTY_ALBUM_NAME) || response.equals(AuthUtils.NOT_LOGGED_IN) || response.equals(AuthUtils.EMPTY_ALBUM_NAME)) {
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "No Artists with this name",
+                    JOptionPane.ERROR_MESSAGE);
+
+            log.info("No album with name {}", album);
+        }else {
+            // formatting it nice for the user
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("albums").getAsString();
+
+            String[] artists = result.split("##");
+
+            //create a new frame
+            fViewSearchAlbum = new JFrame("frame");
+
+            //create a panel
+            JPanel p =new JPanel();
+
+            artistListLabel = new JLabel("Searched album with the name: "+album);
+            p.add(artistListLabel, getGridBagConstraints(0, 0, 1));
+
+            String [] artistArray = grow(artists, artists.length);
+            b = new JList(artistArray);
+            b.setSelectedIndex(0);
+            p.add(b);
+            fViewSearchAlbum.add(p);
+            fViewSearchAlbum.setSize(500,400);
+
+            goBackToArtistPage = new JButton("Go Back To Album Page");
+            // Specify what the button should DO when clicked:
+            goBackToArtistPage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToAlbumPageAfterSearch();
+                }
+            });
+            p.add(goBackToArtistPage, getGridBagConstraints(0, 2, 2));
+
+            goBackToHomePage = new JButton("Go Back To Home Page");
+            // Specify what the button should DO when clicked:
+            goBackToHomePage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToHomePageEmailList();
+                }
+            });
+            p.add(goBackToHomePage, getGridBagConstraints(0, 3, 2));
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 4, 2));
+
+
+            fViewSearchAlbum.show();
+
+
+
+            albumSearchTextField.setText("");
+
+        }
 
     }
+
 
     private void setStandardFonts(){
         UIManager.put("Label.font", font);
