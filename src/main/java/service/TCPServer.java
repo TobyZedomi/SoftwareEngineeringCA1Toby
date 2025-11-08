@@ -64,15 +64,10 @@ public class TCPServer implements Runnable {
                             }
                             break;
                         case UserUtilities.LOGIN:
-
-                            /*
                             jsonResponse = loginUser(jsonRequest, userDao, username);
                             if (jsonResponse == createStatusResponse(UserUtilities.LOGIN_SUCCESSFUL, "Login Successful")) {
                                 loginStatus = true;
                             }
-
-
-                             */
 
                             break;
                         case UserUtilities.LOGOUT:
@@ -185,6 +180,55 @@ public class TCPServer implements Runnable {
         }
         return jsonResponse;
     }
+
+
+
+
+    private static JsonObject loginUser(JsonObject jsonRequest, IUserDao userDao, String email) {
+        JsonObject jsonResponse = null;
+        JsonObject payload = (JsonObject) jsonRequest.get("payload");
+        if (payload.size() == 2) {
+
+            String usernameLoggedIn = payload.get("username").getAsString();
+            email = usernameLoggedIn;
+            username = usernameLoggedIn;
+            String password = payload.get("password").getAsString();
+
+            boolean loginUser = userDao.loginUser(usernameLoggedIn, password);
+
+
+            if (!usernameLoggedIn.isEmpty()) {
+                if (usernameLoggedIn != null) {
+                    if (!password.isEmpty()) {
+                        if (password != null) {
+                            if (loginUser == true) {
+                                jsonResponse = createStatusResponse(UserUtilities.LOGIN_SUCCESSFUL, "Login Successful");
+                                log.info("User {} successfully logged in ", usernameLoggedIn);
+                            } else {
+                                jsonResponse = createStatusResponse(UserUtilities.LOGIN_FAILED, "Login Failed");
+                                log.info("User {} failed logged in", username);
+
+                            }
+                        }else{
+                            jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                        }
+                    }else {
+                        jsonResponse = createStatusResponse(UserUtilities.INVALID, "Cant leave password empty");
+                    }
+                } else {
+                    jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                }
+            } else {
+                jsonResponse = createStatusResponse(UserUtilities.INVALID, "Cant leave username empty");
+            }
+        } else {
+            jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+            log.info("User {} failed logged in", username);
+
+        }
+        return jsonResponse;
+    }
+
 
 
 }

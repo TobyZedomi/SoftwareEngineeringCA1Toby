@@ -17,4 +17,7 @@ public interface IUserDao {
     boolean checkIfPasswordsMatchRegex(String password, String confirmPassword);
 
 
+    boolean loginUser(String username, String password);
+
+    public User findUserByUsername(String username);
 }

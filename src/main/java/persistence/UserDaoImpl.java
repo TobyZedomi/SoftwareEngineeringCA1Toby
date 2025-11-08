@@ -139,6 +139,83 @@ public class UserDaoImpl extends MySQLDao implements IUserDao{
     }
 
 
+    @Override
+    public User findUserByUsername(String username){
+
+        User user = null;
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try{
+
+
+            con = getConnection();
+
+            String query = "SELECT * FROM users where username = ?";
+            ps = con.prepareStatement(query);
+            // Fill in the blanks, i.e. parameterize the query
+            ps.setString(1, username);
+            rs = ps.executeQuery();
+
+
+
+            if(rs.next()){
+
+                user = mapRow(rs);
+            }
+
+
+        } catch (SQLException e) {
+            System.out.println("SQL Exception occurred when attempting to prepare SQL for execution");
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    freeConnection(con);
+                }
+            } catch (SQLException e) {
+                System.out.println("Exception occurred in the finally section of the method: " + e.getMessage());
+            }
+        }
+        return user;
+    }
+
+
+    /**
+     * Login user based on if username and password match whats in the hashmap
+     * @param username is the username being searched
+     * @param password is the password being searched
+     * @return true if there is a match and false if no match
+     */
+    public boolean loginUser(String username, String password){
+
+        boolean match = false;
+
+        User u = findUserByUsername(username);
+
+
+        if (u == null){
+
+            match = false;
+        }
+
+        if (u != null){
+            if (checkPassword(password, u.getPassword())){
+
+                match = true;
+            }
+        }
+        return match;
+    }
+
 
     /**
      * Check if passwords are the same
