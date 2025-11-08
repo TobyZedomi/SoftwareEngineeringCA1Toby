@@ -15,7 +15,7 @@ public class Artist {
 
     private int artist_id;
     private String artist_name;
-    private String genre;
+    private int genre_id;
     private String overview;
     private LocalDate date_of_birth;
 }

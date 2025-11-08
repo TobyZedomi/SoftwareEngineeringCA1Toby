@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import model.Artist;
 import model.User;
 import network.TCPNetworkLayer;
-import persistence.ArtistDaoImpl;
-import persistence.IArtistDao;
-import persistence.IUserDao;
-import persistence.UserDaoImpl;
+import persistence.*;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -28,17 +25,20 @@ public class TCPServer implements Runnable {
 
     private ArtistDaoImpl artistDao;
 
+    private GenreDaoImpl genreDao;
+
     private static String username;
 
     private final Gson gson = new Gson();
 
 
-    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, ArtistDaoImpl artistDao,  String username) throws IOException {
+    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, ArtistDaoImpl artistDao, GenreDaoImpl genreDao,  String username) throws IOException {
         this.clientDataSocket = clientDataSocket;
         this.networkLayer = new TCPNetworkLayer(clientDataSocket);
 
         this.userDao = userDao;
         this.artistDao = artistDao;
+        this.genreDao = genreDao;
         this.username = username;
     }
 
@@ -324,7 +324,7 @@ public class TCPServer implements Runnable {
         if (m == null) {
             throw new IllegalArgumentException("Cannot serialise null Movie");
         }
-        return "ID: " + m.getArtist_id() + UserUtilities.ARTIST_DELIMITER + "Name: " + m.getArtist_name() + UserUtilities.ARTIST_DELIMITER + "Genre: " + m.getGenre() + UserUtilities.ARTIST_DELIMITER +  "Date: " + m.getDate_of_birth();
+        return "ID: " + m.getArtist_id() + UserUtilities.ARTIST_DELIMITER + "Name: " + m.getArtist_name() + UserUtilities.ARTIST_DELIMITER + "Genre: " + genreDao.getGenreNameById(m.getGenre_id()) + UserUtilities.ARTIST_DELIMITER +  "Date: " + m.getDate_of_birth();
     }
 
     private JsonObject createStatusResponse2(String status, String artists) {
