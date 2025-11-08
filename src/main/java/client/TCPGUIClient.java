@@ -907,6 +907,20 @@ public class TCPGUIClient {
             });
 
             p.add(goBackToHomePage, getGridBagConstraints(0, 4, 2));
+
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 5, 2));
             f.show();
 
         }
@@ -985,7 +999,24 @@ public class TCPGUIClient {
                 }
             });
             p.add(goBackToHomePage, getGridBagConstraints(0, 3, 2));
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 4, 2));
+
+
             f1.show();
+
+
 
             artistSearchTextField.setText("");
 
