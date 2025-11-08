@@ -9,4 +9,7 @@ public interface IArtistDao {
     public ArrayList<Artist> getAllArtist();
 
     public ArrayList<Artist> searchForArtistByArtistName(String artistName);
+
+    public String getArtistNameById(int id);
+
 }

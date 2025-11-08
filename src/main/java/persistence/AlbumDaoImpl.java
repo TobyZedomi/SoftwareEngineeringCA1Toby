@@ -1,8 +1,7 @@
 package persistence;
 
+import model.Album;
 import model.Artist;
-import model.Genre;
-import model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,43 +9,47 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ArtistDaoImpl extends MySQLDao implements IArtistDao{
+public class AlbumDaoImpl extends MySQLDao implements IAlbumDao {
 
-    public ArtistDaoImpl(String databaseName){
+
+    public AlbumDaoImpl(String databaseName){
         super(databaseName);
     }
 
-    public ArtistDaoImpl(Connection conn){
+    public AlbumDaoImpl(Connection conn){
         super(conn);
     }
 
-    public ArtistDaoImpl(){
+    public AlbumDaoImpl(){
         super();
     }
 
+
+
+
     /**
-     * Get all artist information
-     * @return all artist
+     * Get all album information
+     * @return all albums
      */
     @Override
-    public ArrayList<Artist> getAllArtist(){
+    public ArrayList<Album> getAllAlbums(){
 
-        ArrayList<Artist> artist = new ArrayList<>();
+        ArrayList<Album> albums = new ArrayList<>();
 
         // Get a connection using the superclass
         Connection conn = super.getConnection();
         // TRY to get a statement from the connection
         // When you are parameterizing the query, remember that you need
         // to use the ? notation (so you can fill in the blanks later)
-        try (PreparedStatement ps = conn.prepareStatement("Select * from artist")) {
+        try (PreparedStatement ps = conn.prepareStatement("Select * from album")) {
             // TRY to execute the query
             try (ResultSet rs = ps.executeQuery()) {
                 // Extract the information from the result set
                 // Use extraction method to avoid code repetition!
                 while(rs.next()){
 
-                    Artist a = mapRow(rs);
-                    artist.add(a);
+                    Album a = mapRow(rs);
+                    albums.add(a);
                 }
             } catch (SQLException e) {
                 System.out.println("SQL Exception occurred when executing SQL or processing results.");
@@ -61,14 +64,14 @@ public class ArtistDaoImpl extends MySQLDao implements IArtistDao{
             // Close the connection using the superclass method
             super.freeConnection(conn);
         }
-        return artist;
+        return albums;
     }
 
 
     @Override
-    public ArrayList<Artist> searchForArtistByArtistName(String artistName){
+    public ArrayList<Album> searchForAlbumByAlbumName(String albumName){
 
-        ArrayList<Artist> movieProducts = new ArrayList<>();
+        ArrayList<Album> album = new ArrayList<>();
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -78,15 +81,15 @@ public class ArtistDaoImpl extends MySQLDao implements IArtistDao{
 
             con = getConnection();
 
-            String query = "SELECT * FROM artist WHERE artist_name LIKE '%' ? '%'";
+            String query = "SELECT * FROM album WHERE album_name LIKE '%' ? '%'";
             ps = con.prepareStatement(query);
             // Fill in the blanks, i.e. parameterize the query
-            ps.setString(1, artistName);
+            ps.setString(1, albumName);
             rs = ps.executeQuery();
 
             while(rs.next()){
-                Artist a = mapRow(rs);
-                movieProducts.add(a);
+                Album a = mapRow(rs);
+                album.add(a);
 
             }
 
@@ -108,75 +111,24 @@ public class ArtistDaoImpl extends MySQLDao implements IArtistDao{
                 System.out.println("Exception occured in the finally section of the getProductByCode() method: " + e.getMessage());
             }
         }
-        return movieProducts;
+        return album;
     }
 
 
 
-    // get artist name by id
 
 
+    private Album mapRow(ResultSet rs)throws SQLException {
 
+        Album a = new Album(
 
-    @Override
-    public String getArtistNameById(int id) {
-
-        Artist artist = null;
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-
-        try {
-
-            con = getConnection();
-
-            String query = "SELECT * FROM artist where artist_id = ?";
-            ps = con.prepareStatement(query);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-
-
-            if (rs.next()) {
-
-                artist = mapRow(rs);
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Exception occured in the getMovieById() method: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                if (con != null) {
-                    freeConnection(con);
-                }
-            } catch (SQLException e) {
-                System.out.println("Exception occured in the finally section of the getProductByCode() method: " + e.getMessage());
-            }
-        }
-        return artist.getArtist_name();
-    }
-
-
-
-    private Artist mapRow(ResultSet rs)throws SQLException {
-
-        Artist a = new Artist(
-
+                rs.getInt("album_id"),
+                rs.getString("album_name"),
                 rs.getInt("artist_id"),
-                rs.getString("artist_name"),
-                rs.getInt("genre_id"),
-                rs.getString("overview"),
-                rs.getDate("date_of_birth").toLocalDate()
+                rs.getString("description"),
+                rs.getDate("date_of_release").toLocalDate()
         );
         return a;
     }
-
-
 
 }
