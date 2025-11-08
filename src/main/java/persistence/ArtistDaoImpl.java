@@ -118,7 +118,7 @@ public class ArtistDaoImpl extends MySQLDao implements IArtistDao{
 
                 rs.getInt("artist_id"),
                 rs.getString("artist_name"),
-                rs.getString("genre"),
+                rs.getInt("genre_id"),
                 rs.getString("overview"),
                 rs.getDate("date_of_birth").toLocalDate()
         );

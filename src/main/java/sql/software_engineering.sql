@@ -13,14 +13,23 @@ CREATE TABLE users
     PRIMARY KEY (username)
 );
 
+CREATE TABLE genre
+(
+    genre_id    INT AUTO_INCREMENT,
+    genre_name      varchar(255) NOT NULL,
+    PRIMARY KEY (genre_id)
+);
+
 CREATE TABLE artist
 (
     artist_id        INT AUTO_INCREMENT,
     artist_name      varchar(255) NOT NULL,
-    genre    varchar(255)         NOT NULL,
+    genre_id     INT(11) NOT NULL,
     overview      varchar(255) NOT NULL,
     date_of_birth DATE         NOT NULL,
-    PRIMARY KEY (artist_id)
+    PRIMARY KEY (artist_id),
+    FOREIGN KEY (genre_id) REFERENCES artist (genre_id)
+
 );
 
 

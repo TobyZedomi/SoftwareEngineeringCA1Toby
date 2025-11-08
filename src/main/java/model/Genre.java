@@ -2,7 +2,6 @@ package model;
 
 import lombok.*;
 
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -11,11 +10,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Artist {
 
-    private int artist_id;
-    private String artist_name;
+public class Genre {
+
     private int genre_id;
-    private String overview;
-    private LocalDate date_of_birth;
+    private String genre_name;
 }
