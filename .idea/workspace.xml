@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7965d6dd-b525-430e-b6eb-59aaf0f29a40" name="Changes" comment="First commit">
+    <list default="true" id="7965d6dd-b525-430e-b6eb-59aaf0f29a40" name="Changes" comment="NetworkLayer class">
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Album.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Album.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Artist.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Artist.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Review.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Review.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +52,40 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager" selected="Application.TCPGUIClient">
+    <configuration name="TCPGUIClient" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="client.TCPGUIClient" />
+      <module name="SoftwareEngineeringCA1Toby" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="client.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ThreadedTCPServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="service.ThreadedTCPServer" />
+      <module name="SoftwareEngineeringCA1Toby" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.TCPGUIClient" />
+        <item itemvalue="Application.ThreadedTCPServer" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -64,7 +94,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1762617560603</updated>
-      <workItem from="1762617561906" duration="1287000" />
+      <workItem from="1762617561906" duration="2975000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <created>1762617938991</created>
@@ -73,7 +103,21 @@
       <option name="project" value="LOCAL" />
       <updated>1762617938991</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Model classes for Album, Artist, User and Review">
+      <created>1762620324527</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1762620324527</updated>
+    </task>
+    <task id="LOCAL-00003" summary="NetworkLayer class">
+      <created>1762620397719</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1762620397719</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -81,6 +125,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="First commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="First commit" />
+    <MESSAGE value="Model classes for Album, Artist, User and Review" />
+    <MESSAGE value="NetworkLayer class" />
+    <option name="LAST_COMMIT_MESSAGE" value="NetworkLayer class" />
   </component>
 </project>
