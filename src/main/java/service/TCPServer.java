@@ -4,8 +4,11 @@ package service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import model.Artist;
 import model.User;
 import network.TCPNetworkLayer;
+import persistence.ArtistDaoImpl;
+import persistence.IArtistDao;
 import persistence.IUserDao;
 import persistence.UserDaoImpl;
 
@@ -13,6 +16,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.StringJoiner;
 
 @Slf4j
 public class TCPServer implements Runnable {
@@ -21,17 +26,19 @@ public class TCPServer implements Runnable {
     private TCPNetworkLayer networkLayer;
     private UserDaoImpl userDao;
 
+    private ArtistDaoImpl artistDao;
 
     private static String username;
 
     private final Gson gson = new Gson();
 
 
-    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, String username) throws IOException {
+    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, ArtistDaoImpl artistDao,  String username) throws IOException {
         this.clientDataSocket = clientDataSocket;
         this.networkLayer = new TCPNetworkLayer(clientDataSocket);
 
         this.userDao = userDao;
+        this.artistDao = artistDao;
         this.username = username;
     }
 
@@ -41,7 +48,6 @@ public class TCPServer implements Runnable {
             boolean validClientSession = true;
             boolean loginStatus = false;
 
-            System.out.println("hello");
 
             while (validClientSession) {
 
@@ -57,7 +63,6 @@ public class TCPServer implements Runnable {
                     String action = jsonRequest.get("action").getAsString();
                     switch (action) {
                         case UserUtilities.REGISTER:
-
                             jsonResponse = registerUser(jsonRequest, userDao);
                             if (jsonResponse == createStatusResponse(UserUtilities.REGISTER_SUCCESSFUL, "Register Successful")) {
                                 loginStatus = true;
@@ -68,17 +73,21 @@ public class TCPServer implements Runnable {
                             if (jsonResponse == createStatusResponse(UserUtilities.LOGIN_SUCCESSFUL, "Login Successful")) {
                                 loginStatus = true;
                             }
-
+                            break;
+                        case UserUtilities.GET_ALL_ARTIST:
+                            jsonResponse = getAllArtist(loginStatus, artistDao);
+                            break;
+                        case UserUtilities.SEARCH_FOR_ARTIST:
+                            jsonResponse = searchForArtist(loginStatus, jsonRequest, artistDao);
                             break;
                         case UserUtilities.LOGOUT:
+                            jsonResponse = createStatusResponse(UserUtilities.GOODBYE, username+ " logged out of the system");
                             loginStatus = false;
                             break;
                         case UserUtilities.EXIT:
-                            /*
+
                             jsonResponse = createStatusResponse(UserUtilities.GOODBYE, "Goodbye");
                             validClientSession = false;
-
-                             */
                             break;
                     }
 
@@ -196,7 +205,6 @@ public class TCPServer implements Runnable {
 
             boolean loginUser = userDao.loginUser(usernameLoggedIn, password);
 
-
             if (!usernameLoggedIn.isEmpty()) {
                 if (usernameLoggedIn != null) {
                     if (!password.isEmpty()) {
@@ -230,5 +238,99 @@ public class TCPServer implements Runnable {
     }
 
 
+    private JsonObject getAllArtist(boolean loginStatus, IArtistDao artistDao) {
+        JsonObject jsonResponse;
+        if (!loginStatus) {
+            ArrayList<Artist> allArtist = artistDao.getAllArtist();
 
+            if (!allArtist.isEmpty()) {
+                if (allArtist != null) {
+                    jsonResponse = serializeArtist(allArtist);
+                    log.info("All Artist retrieved all there emails ", username);
+
+                } else {
+                    jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                }
+            } else {
+                jsonResponse = createStatusResponse(UserUtilities.YOU_HAVE_NO_ARTISTS, "You have no artists");
+                log.info("Theres no artist to retrieve ", username);
+            }
+        } else {
+            jsonResponse = createStatusResponse(UserUtilities.NOT_LOGGED_IN, "Not logged in");
+            log.info("{} is not logged in", username);
+
+        }
+        return jsonResponse;
+    }
+
+
+
+
+    private JsonObject searchForArtist(boolean loginStatus, JsonObject jsonRequest, IArtistDao artistDao) {
+        JsonObject jsonResponse;
+        if (!loginStatus) {
+
+            JsonObject payload = (JsonObject) jsonRequest.get("payload");
+            if (payload.size() == 1) {
+                String artist = payload.get("artist").getAsString();
+
+                ArrayList<Artist> artistFromSearch = artistDao.searchForArtistByArtistName(artist);
+
+                if (!artist.isEmpty()) {
+                    if (artist != null) {
+                        if (!artistFromSearch.isEmpty()) {
+                            if (artistFromSearch != null) {
+                                jsonResponse = serializeArtist(artistFromSearch);
+                                log.info("User {} searched for artist with name {} ", username, artist);
+                            } else {
+                                jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                            }
+                        } else {
+                            jsonResponse = createStatusResponse(UserUtilities.NO_ARTISTS_WITH_THIS_NAME, "No artist found");
+                            log.info("User {} searched for artist with name {} but there is no artist ", username, artist);
+
+                        }
+                    }else{
+                        jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+                    }
+                }else{
+                    jsonResponse = createStatusResponse(UserUtilities.EMPTY_ARTIST_NAME, "Artist name was left empty");
+                }
+
+            } else {
+                jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+            }
+        } else {
+            jsonResponse = createStatusResponse(UserUtilities.NOT_LOGGED_IN, "Not logged in");
+            log.info("{} is not logged in", username);
+        }
+        return jsonResponse;
+    }
+
+
+    public JsonObject serializeArtist(ArrayList<Artist> artists) {
+        JsonObject jsonResponse = null;
+
+        StringJoiner joiner = new StringJoiner(UserUtilities.ARTIST_DELIMITER2);
+
+        for (Artist a : artists) {
+            joiner.add(serializeArtist(a));
+            jsonResponse = createStatusResponse2(UserUtilities.ARTISTS_RETRIEVED_SUCCESSFULLY, joiner.toString());
+        }
+        return jsonResponse;
+    }
+
+    public String serializeArtist(Artist m) {
+        if (m == null) {
+            throw new IllegalArgumentException("Cannot serialise null Movie");
+        }
+        return "ID: " + m.getArtist_id() + UserUtilities.ARTIST_DELIMITER + "Name: " + m.getArtist_name() + UserUtilities.ARTIST_DELIMITER + "Genre: " + m.getGenre() + UserUtilities.ARTIST_DELIMITER +  "Date: " + m.getDate_of_birth();
+    }
+
+    private JsonObject createStatusResponse2(String status, String artists) {
+        JsonObject invalidResponse = new JsonObject();
+        invalidResponse.addProperty("status", status);
+        invalidResponse.addProperty("artists", artists);
+        return invalidResponse;
+    }
 }
