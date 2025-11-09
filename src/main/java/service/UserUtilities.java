@@ -18,6 +18,10 @@ public class UserUtilities {
     public static final String SEARCH_FOR_ALBUM = "SEARCH_FOR_ALBUM";
 
     public static final String GET_ALL_ALBUM = "GET_ALL_ALBUM";
+    public static final String SEARCH_FOR_ALBUM_FOR_USER_REVIEW = "SEARCH_FOR_ALBUM_FOR_USER_REVIEW";
+
+
+    public static final String ADD_REVIEW = "ADD_REVIEW";
 
     public static final String EXIT = "EXIT";
     public static final String LOGOUT = "LOGOUT";
@@ -46,6 +50,10 @@ public class UserUtilities {
 
     public static final String ALBUMS_RETRIEVED_SUCCESSFULLY = "ALBUMS_RETRIEVED_SUCCESSFULLY";
 
+
+    public static final String REVIEWS_RETRIEVED_SUCCESSFULLY = "REVIEWS_RETRIEVED_SUCCESSFULLY";
+
+
     public static final String YOU_HAVE_NO_ARTISTS = "YOU_HAVE_NO_ARTISTS";
 
 
@@ -58,6 +66,20 @@ public class UserUtilities {
     public static final String NO_ALBUMS_WITH_THIS_NAME = "NO_ALBUMS_WITH_THIS_NAME";
 
     public static final String EMPTY_ALBUM_NAME = "EMPTY_ALBUM_NAME";
+
+
+    public static final String ALBUM_FOUND = "ALBUM_FOUND";
+
+    public static final String REVIEW_ALREADY_EXIST = "REVIEW_ALREADY_EXIST";
+
+    public static final String RATING_OVER = "RATING_OVER";
+
+    public static final String REVIEW_OF_ALBUM_SUCCESSFULLY_SENT = "REVIEW_OF_ALBUM_SUCCESSFULLY_SENT";
+
+
+    public static final String ALBUM_DONT_EXIST = "ALBUM_DONT_EXIST";
+
+    public static final String NON_NUMERIC_ID= "NON_NUMERIC_ID";
 
 
 

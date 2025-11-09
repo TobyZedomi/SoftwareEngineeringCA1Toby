@@ -77,6 +77,7 @@ public class TCPGUIClient {
 
     private JButton goBackToArtistPage;
 
+    private JButton buttonToReviewAlbum;
 
     private JButton goBackToAlbumPage;
 
@@ -93,6 +94,9 @@ public class TCPGUIClient {
     private JButton searchForArtist;
 
     private JButton searchForAlbum;
+
+    private JButton searchForAlbumReview;
+
 
 
     private JButton getContentOfReceivedEmails;
@@ -128,24 +132,24 @@ public class TCPGUIClient {
 
     // send Email
 
-    private JPanel sendEmailView;
-    private JButton sendEmailViewButton;
+    private JPanel sendAlbumReviewView;
+    private JButton completeReviewButton;
 
 
     private JLabel receiverEmailLabel;
 
     private JTextField receiverEmailTextField;
 
-    private JLabel subjectLabel;
+    private JLabel ratingLabel;
 
 
-    private JTextField subjectTextField;
+    private JTextField ratingTextField;
 
 
-    private JLabel contentLabel;
+    private JLabel commentLabel;
 
 
-    private JTextField contentTextField;
+    private JTextField commentTextField;
 
 
     // search for emails based on subject
@@ -162,6 +166,11 @@ public class TCPGUIClient {
     private JLabel albumSearchLabel;
 
     private JTextField albumSearchTextField;
+
+
+    private JLabel albumReviewSearchLabel;
+
+    private static JTextField albumReviewSearchTextField;
 
     // get content of retrieved emails based on email Id
 
@@ -206,6 +215,8 @@ public class TCPGUIClient {
     private JTextField emailSentIdTextField;
 
 
+
+
     // Use constructor to establish the components (parts) of the GUI
     public TCPGUIClient() {
 
@@ -223,6 +234,8 @@ public class TCPGUIClient {
 
         configureRegisterView();
 
+
+        configureAddReviewPanel();
 
 
     }
@@ -582,6 +595,100 @@ public class TCPGUIClient {
         showRegisterView();
     }
 
+
+    private void configureAddReviewPanel(){
+        // Create and configure the config panel
+        // This will provide a view to take in the user credentials
+        // Use a GridBag layout so we have a grid to work with, but there's some flexibility (button can span columns)
+        sendAlbumReviewView = new JPanel(new GridBagLayout());
+        // Register this panel as a container in the system
+        guiContainers.put("sendEmailView", sendAlbumReviewView);
+
+        // Create text fields and associated labels to take in username and password
+        // Username info
+
+
+        ratingLabel = new JLabel("Rating: ");
+        ratingTextField = new JTextField(15);
+
+
+        commentLabel = new JLabel("Comment: ");
+        commentTextField = new JTextField(15);
+
+
+        // Create a button to log in user
+        completeReviewButton = new JButton("Complete Review");
+        // Specify what the button should DO when clicked:
+        completeReviewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               addReviewForAlbum();
+            }
+        });
+
+
+        goBackToHomePage = new JButton("Go Back To Home Page");
+        // Specify what the button should DO when clicked:
+        goBackToHomePage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                goBackToHomePageSendEmail();
+            }
+        });
+
+        goBackToArtistPage = new JButton("Go Back To Album Page");
+        // Specify what the button should DO when clicked:
+        goBackToArtistPage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                goBackToAlbumPageAfterReview();
+            }
+        });
+
+
+
+        logOut = new JButton("LogOut");
+        // Specify what the button should DO when clicked:
+        logOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                logOutSendEmail();
+            }
+        });
+
+
+        sendAlbumReviewView.add(ratingLabel, getGridBagConstraints(0, 1, 1));
+        sendAlbumReviewView.add(ratingTextField, getGridBagConstraints(1, 1, 1));
+
+        sendAlbumReviewView.add(commentLabel, getGridBagConstraints(0, 2, 1));
+        sendAlbumReviewView.add(commentTextField, getGridBagConstraints(1, 2, 1));
+
+
+        // Add button on third row (y = 2) spanning two columns (width = 2)
+        sendAlbumReviewView.add(completeReviewButton, getGridBagConstraints(0, 3, 2));
+
+        sendAlbumReviewView.add(goBackToArtistPage, getGridBagConstraints(0, 4, 2));
+
+
+        // Add button on third row (y = 2) spanning two columns (width = 2)
+        sendAlbumReviewView.add(goBackToHomePage, getGridBagConstraints(0, 5, 2));
+
+
+        sendAlbumReviewView.add(logOut, getGridBagConstraints(0, 6, 2));
+    }
+
+
+    private void showAddReviewView(){
+
+        // Add config panel to the main window and make it visible
+        // mainFrame.remove(0);
+
+        fViewAlbum.dispose();
+        mainFrame.remove(homePageView);
+        mainFrame.add(sendAlbumReviewView);
+        mainFrame.setVisible(true);
+    }
+
     private void logOutUser(){
 
         JsonObject requestJson = new JsonObject();
@@ -631,7 +738,7 @@ public class TCPGUIClient {
         JOptionPane.showMessageDialog(initialView, result1, "LogOut Email System",
                 JOptionPane.INFORMATION_MESSAGE);
 
-        mainFrame.remove(sendEmailView);
+        mainFrame.remove(sendAlbumReviewView);
         showInitialView();
     }
 
@@ -747,11 +854,15 @@ public class TCPGUIClient {
     }
 
 
+
+
     private void goBackToHomePageSendEmail(){
 
-        mainFrame.remove(sendEmailView);
+        mainFrame.remove(sendAlbumReviewView);
         showHomePageView();
     }
+
+
 
 
     private void goBackToHomePageSendEmail2(){
@@ -799,6 +910,13 @@ public class TCPGUIClient {
     }
 
 
+    private void goBackToHomePageEmailList2(){
+
+        fViewAlbum.dispose();
+        showHomePageView();
+    }
+
+
 
     private void goBackToArtistPageAfterSearch(){
 
@@ -810,6 +928,19 @@ public class TCPGUIClient {
 
         fViewSearchAlbum.dispose();
         fViewAlbum.show();
+    }
+
+
+    private void goBackToAlbumPageAfterReview(){
+        mainFrame.remove(sendAlbumReviewView);
+        fViewAlbum.show();
+    }
+
+    private void showAlbumReview(){
+
+        mainFrame.remove(initialView);
+        mainFrame.add(sendAlbumReviewView);
+        mainFrame.setVisible(true);
     }
 
     private void setRegisterButton(){
@@ -1020,7 +1151,7 @@ public class TCPGUIClient {
 
 
 
-            artistListLabel = new JLabel("List of all artist in the system");
+            artistListLabel = new JLabel("List of all Albums in the system");
             p.add(artistListLabel, getGridBagConstraints(0, 3, 2));
 
             String [] artistArray = grow(artists, artists.length);
@@ -1029,17 +1160,81 @@ public class TCPGUIClient {
             p.add(b);
             fViewAlbum.add(p);
             fViewAlbum.setSize(500,400);
+            // go review album here
+
+            albumReviewSearchLabel = new JLabel("Album Id: ");
+            albumReviewSearchTextField = new JTextField(15);
+
+            ratingLabel = new JLabel("Rating: ");
+            ratingTextField = new JTextField(15);
+
+
+            commentLabel = new JLabel("Comment: ");
+            commentTextField = new JTextField(15);
+
+
+            // Create a button to log in user
+            completeReviewButton = new JButton("Complete Review");
+            // Specify what the button should DO when clicked:
+            completeReviewButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    addReviewForAlbum();
+                }
+            });
+
+
+
+            p.add(albumReviewSearchLabel, getGridBagConstraints(0, 4, 1));
+            p.add(albumReviewSearchTextField, getGridBagConstraints(1, 4, 1));
+
+            p.add(ratingLabel, getGridBagConstraints(0, 5, 1));
+            p.add(ratingTextField, getGridBagConstraints(1, 5, 1));
+
+            p.add(commentLabel, getGridBagConstraints(0, 6, 1));
+            p.add(commentTextField, getGridBagConstraints(1, 6, 1));
+
+
+            // Add button on third row (y = 2) spanning two columns (width = 2)
+            p.add(completeReviewButton, getGridBagConstraints(0, 7, 2));
+
+            albumReviewSearchTextField.getText();
+            ratingTextField.getText();
+            commentTextField.getText();
+
+
+            /*
+            albumReviewSearchLabel = new JLabel("Enter Album to Review: ");
+            albumReviewSearchTextField = new JTextField(15);
+
+            searchForAlbumReview = new JButton("Go Review Album");
+            // Specify what the button should DO when clicked:
+            searchForAlbumReview.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchForAlbumToReview();
+                }
+            });
+
+            p.add(albumReviewSearchLabel, getGridBagConstraints(0, 4, 2));
+            p.add(albumReviewSearchTextField, getGridBagConstraints(1, 4, 2));
+            p.add(searchForAlbumReview, getGridBagConstraints(0, 5, 2));
+
+             */
+
+
+
 
             goBackToHomePage = new JButton("Go Back To Home Page");
             // Specify what the button should DO when clicked:
             goBackToHomePage.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    goBackToHomePageEmailList();
+                    goBackToHomePageEmailList2();
                 }
             });
 
-            p.add(goBackToHomePage, getGridBagConstraints(0, 4, 2));
+            p.add(goBackToHomePage, getGridBagConstraints(0, 8, 2));
 
 
             logOut = new JButton("Log Out");
@@ -1053,7 +1248,7 @@ public class TCPGUIClient {
 
 
 
-            p.add(logOut, getGridBagConstraints(0, 5, 2));
+            p.add(logOut, getGridBagConstraints(0, 9, 2));
             fViewAlbum.show();
 
         }
@@ -1156,8 +1351,6 @@ public class TCPGUIClient {
         }
     }
 
-
-
     private void searchForAlbum(){
 
         String album = albumSearchTextField.getText();
@@ -1241,14 +1434,121 @@ public class TCPGUIClient {
 
             p.add(logOut, getGridBagConstraints(0, 4, 2));
 
-
             fViewSearchAlbum.show();
-
-
-
             albumSearchTextField.setText("");
 
         }
+
+    }
+
+
+
+    // search for album to review
+
+    /*
+    private void searchForAlbumToReview(){
+
+        String album = albumReviewSearchTextField.getText();
+
+        JsonObject payload = new JsonObject();
+        payload.addProperty("album", album);
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.SEARCH_FOR_ALBUM_FOR_USER_REVIEW);
+        requestJson.add("payload", payload);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+        if (response.equals(AuthUtils.NON_NUMERIC_ID) || response.equals(AuthUtils.NO_ALBUMS_WITH_THIS_NAME) || response.equals(AuthUtils.INVALID) || response.equals(AuthUtils.EMPTY_ALBUM_NAME) || response.equals(AuthUtils.NOT_LOGGED_IN)) {
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "No Album with this Id",
+                    JOptionPane.ERROR_MESSAGE);
+
+            log.info("No album with name {}", album);
+        }else if (response.equals(AuthUtils.ALBUM_FOUND)){
+            // formatting it nice for the user
+
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result, "Retrieve Albums success",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            albumReviewSearchTextField.setText("");
+
+
+            showAddReviewView();
+
+        }
+
+    }
+
+     */
+
+
+    // add review for album
+
+
+    private void addReviewForAlbum(){
+
+        String albumId = albumReviewSearchTextField.getText();
+        String rating = ratingTextField.getText();
+        String comment = commentTextField.getText();
+
+
+        JsonObject payload = new JsonObject();
+        payload.addProperty("album", albumId);
+        payload.addProperty("rating", rating);
+        payload.addProperty("comment", comment);
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.ADD_REVIEW);
+        requestJson.add("payload", payload);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+        // formatting it nice for the user
+        JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+        String result = jsonResponse.get("message").getAsString();
+
+        if (response.equalsIgnoreCase(AuthUtils.REVIEW_OF_ALBUM_SUCCESSFULLY_SENT) ) {
+
+            JOptionPane.showMessageDialog(initialView, result, "Sent email Successful",
+                    JOptionPane.INFORMATION_MESSAGE);
+            //mainFrame.remove(sendAlbumReviewView);
+            //showHomePageView();
+
+            log.info("User reviewed album with id {}", albumId);
+
+
+            albumReviewSearchTextField.setText("");
+            ratingTextField.setText("");
+            commentTextField.setText("");
+
+            System.out.println(response);
+            return;
+
+        }else if(response.equals(AuthUtils.NON_NUMERIC_ID) || response.equals(AuthUtils.INVALID) || response.equals(AuthUtils.REVIEW_ALREADY_EXIST) || response.equals(AuthUtils.NOT_LOGGED_IN) || response.equals(AuthUtils.RATING_OVER)){
+
+            JOptionPane.showMessageDialog(initialView, result, "Sent email failed",
+                    JOptionPane.ERROR_MESSAGE);
+            log.info("User already reviewed album {}", albumReviewSearchTextField.getText());
+        }
+
 
     }
 
