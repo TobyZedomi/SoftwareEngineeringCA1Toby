@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 import model.Album;
 import model.Artist;
+import model.Review;
 import model.User;
 import network.TCPNetworkLayer;
 import persistence.*;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.StringJoiner;
 
@@ -30,12 +32,14 @@ public class TCPServer implements Runnable {
 
     private AlbumDaoImpl albumDao;
 
+    private ReviewDaoImpl reviewDao;
+
     private static String username;
 
     private final Gson gson = new Gson();
 
 
-    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, ArtistDaoImpl artistDao, GenreDaoImpl genreDao, AlbumDaoImpl albumDao,  String username) throws IOException {
+    public TCPServer(Socket clientDataSocket, UserDaoImpl userDao, ArtistDaoImpl artistDao, GenreDaoImpl genreDao, AlbumDaoImpl albumDao, ReviewDaoImpl reviewDao,  String username) throws IOException {
         this.clientDataSocket = clientDataSocket;
         this.networkLayer = new TCPNetworkLayer(clientDataSocket);
 
@@ -43,6 +47,7 @@ public class TCPServer implements Runnable {
         this.artistDao = artistDao;
         this.genreDao = genreDao;
         this.albumDao = albumDao;
+        this.reviewDao = reviewDao;
         this.username = username;
     }
 
@@ -89,6 +94,12 @@ public class TCPServer implements Runnable {
                             break;
                         case UserUtilities.SEARCH_FOR_ALBUM:
                             jsonResponse = searchForAlbum(loginStatus, jsonRequest, albumDao);
+                            break;
+                        case UserUtilities.SEARCH_FOR_ALBUM_FOR_USER_REVIEW:
+                            jsonResponse = searchForAlbumForUserReview(loginStatus, jsonRequest, albumDao);
+                            break;
+                        case UserUtilities.ADD_REVIEW:
+                            jsonResponse = addReview(loginStatus, jsonRequest, reviewDao, albumDao);
                             break;
                         case UserUtilities.LOGOUT:
                             jsonResponse = createStatusResponse(UserUtilities.GOODBYE, username+ " logged out of the system");
@@ -390,6 +401,101 @@ public class TCPServer implements Runnable {
 
 
 
+    // search for album for user to review
+
+    private JsonObject searchForAlbumForUserReview(boolean loginStatus, JsonObject jsonRequest, IAlbumDao albumDao) {
+        JsonObject jsonResponse;
+        if (!loginStatus) {
+
+            JsonObject payload = (JsonObject) jsonRequest.get("payload");
+            if (payload.size() == 1) {
+
+                try {
+
+                    int albumID = Integer.parseInt(payload.get("album").getAsString());
+
+                    Album albumForReviewSearch = albumDao.searchForAlbumWithAlbumId(albumID);
+
+                        if (albumForReviewSearch != null) {
+                            jsonResponse = createStatusResponse(UserUtilities.ALBUM_FOUND, "Album found and going to review");
+                            log.info("User {} searched for album with name {} ", username, albumForReviewSearch.getAlbum_name());
+                        } else {
+                            jsonResponse = createStatusResponse(UserUtilities.NO_ALBUMS_WITH_THIS_NAME, "No album found");
+                        }
+
+
+                }catch (NumberFormatException ex) {
+                    jsonResponse = createStatusResponse(UserUtilities.NON_NUMERIC_ID, "Id must be a number");
+                    log.info("User {} entered a non numeric id", username);
+                }
+
+            } else {
+                jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+            }
+        } else {
+            jsonResponse = createStatusResponse(UserUtilities.NOT_LOGGED_IN, "Not logged in");
+            log.info("{} is not logged in", username);
+        }
+        return jsonResponse;
+    }
+
+
+
+    // Add review
+
+    private JsonObject addReview(boolean loginStatus, JsonObject jsonRequest, IReviewDao reviewDao, IAlbumDao albumDao) {
+
+        JsonObject jsonResponse = null;
+
+        if (!loginStatus) {
+
+            JsonObject payload = (JsonObject) jsonRequest.get("payload");
+            if (payload.size() == 3) {
+
+                try {
+
+                    String username1 = username;
+                    int albumID2 = Integer.parseInt(payload.get("album").getAsString());
+                    double ratingUserGave = Double.parseDouble(payload.get("rating").getAsString());
+                    String comment = payload.get("comment").getAsString();
+
+                    System.out.println(albumID2);
+
+                    boolean checkIfRatingLessThan10 = reviewDao.checkIfRatingIsLessThan10(ratingUserGave);
+                    //boolean checkIfAlbumExist = albumDao.checkIfAlbumExistWithId(albumID2);
+                    boolean checkIfReviewExist = reviewDao.checkIfReviewAlreadyExist(username1, albumID2);
+
+
+                            if (checkIfRatingLessThan10 == true) {
+                                if (!checkIfReviewExist == true) {
+                                    reviewDao.addReview(new Review(username1, albumID2, ratingUserGave, comment));
+
+                                    jsonResponse = createStatusResponse(UserUtilities.REVIEW_OF_ALBUM_SUCCESSFULLY_SENT, "Album review Successfully sent");
+                                    log.info("User {} tried to review album {} ", username, albumDao.searchForAlbumWithAlbumId(albumID2).getAlbum_name());
+                                } else {
+                                    jsonResponse = createStatusResponse(UserUtilities.REVIEW_ALREADY_EXIST, "Review already exist");
+                                    log.info("User {} tried to review an album but it doesnt exist ", username);
+                                }
+                            } else {
+                                jsonResponse = createStatusResponse(UserUtilities.RATING_OVER, "Rating must be 10 or lower");
+                            }
+
+                }catch (NumberFormatException ex) {
+                    jsonResponse = createStatusResponse(UserUtilities.NON_NUMERIC_ID, "Id must be a number");
+                    log.info("User {} entered a non numeric id", username);
+                }
+
+            } else {
+                jsonResponse = createStatusResponse(UserUtilities.INVALID, "Invalid");
+            }
+        } else {
+
+            jsonResponse = createStatusResponse(UserUtilities.NOT_LOGGED_IN, "Not logged in");
+            log.info("{} is not logged in", username);
+        }
+        return jsonResponse;
+    }
+
 
     public JsonObject serializeArtist(ArrayList<Artist> artists) {
         JsonObject jsonResponse = null;
@@ -437,13 +543,47 @@ public class TCPServer implements Runnable {
         if (m == null) {
             throw new IllegalArgumentException("Cannot serialise null Album");
         }
-        return "Name: " + m.getAlbum_name() + UserUtilities.ARTIST_DELIMITER + "Artist: " + artistDao.getArtistNameById(m.getArtist_id()) + UserUtilities.ARTIST_DELIMITER + "Description: " + m.getDescription() + UserUtilities.ARTIST_DELIMITER +  "Release Date: " + m.getDate_of_release();
+        return "ID: " +m.getAlbum_id() + UserUtilities.ARTIST_DELIMITER + "Name: " + m.getAlbum_name() + UserUtilities.ARTIST_DELIMITER + "Artist: " + artistDao.getArtistNameById(m.getArtist_id()) + UserUtilities.ARTIST_DELIMITER + "Description: " + m.getDescription() + UserUtilities.ARTIST_DELIMITER +  "Release Date: " + m.getDate_of_release();
     }
 
     private JsonObject createStatusResponse3(String status, String albums) {
         JsonObject invalidResponse = new JsonObject();
         invalidResponse.addProperty("status", status);
         invalidResponse.addProperty("albums", albums);
+        return invalidResponse;
+    }
+
+
+
+
+
+
+    // review serilization
+
+
+    public JsonObject serializeReview(ArrayList<Review> reviews) {
+        JsonObject jsonResponse = null;
+
+        StringJoiner joiner = new StringJoiner(UserUtilities.ARTIST_DELIMITER2);
+
+        for (Review r : reviews) {
+            joiner.add(serializeReview(r));
+            jsonResponse = createStatusResponse4(UserUtilities.REVIEWS_RETRIEVED_SUCCESSFULLY, joiner.toString());
+        }
+        return jsonResponse;
+    }
+
+    public String serializeReview(Review m) {
+        if (m == null) {
+            throw new IllegalArgumentException("Cannot serialise null Album");
+        }
+        return "Name: " + m.getUsername() + UserUtilities.ARTIST_DELIMITER + "Album: " + artistDao.getArtistNameById(m.getAlbum_id()) + UserUtilities.ARTIST_DELIMITER + "Rating: " + m.getRating() + UserUtilities.ARTIST_DELIMITER +  "Comment: " + m.getComment();
+    }
+
+    private JsonObject createStatusResponse4(String status, String reviews) {
+        JsonObject invalidResponse = new JsonObject();
+        invalidResponse.addProperty("status", status);
+        invalidResponse.addProperty("reviews", reviews);
         return invalidResponse;
     }
 }

@@ -1,9 +1,6 @@
 package service;
 
-import persistence.AlbumDaoImpl;
-import persistence.ArtistDaoImpl;
-import persistence.GenreDaoImpl;
-import persistence.UserDaoImpl;
+import persistence.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -37,13 +34,15 @@ public class ThreadedTCPServer {
             ArtistDaoImpl artistDao = new ArtistDaoImpl("database.properties");
             GenreDaoImpl genreDao = new GenreDaoImpl("database.properties");
             AlbumDaoImpl albumDao = new AlbumDaoImpl("database.properties");
+            ReviewDaoImpl reviewDao = new ReviewDaoImpl("database.properties");
+
 
             String username = new String();
 
             boolean validServerSession = true;
             while(validServerSession){
                 Socket clientDataSocket = connectionSocket.accept();
-                TCPServer clientHandler = new TCPServer(clientDataSocket, userDao, artistDao, genreDao, albumDao, username);
+                TCPServer clientHandler = new TCPServer(clientDataSocket, userDao, artistDao, genreDao, albumDao, reviewDao, username);
                 clientHandlerPool.submit(clientHandler);
             }
         }catch (IOException e){
