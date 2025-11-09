@@ -17,4 +17,7 @@ public class Album {
     private int artist_id;
     private String description;
     private LocalDate date_of_release;
+
+
+
 }

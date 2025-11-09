@@ -58,6 +58,7 @@ public class UserDaoImpl extends MySQLDao implements IUserDao{
     }
 
 
+    @Override
     public int registerUser(User newUser){
         // DATABASE CODE
         //
