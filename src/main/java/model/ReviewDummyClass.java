@@ -8,7 +8,7 @@ import lombok.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class  Review {
+public class ReviewDummyClass extends Review {
 
     private int review_id;
     private String username;
