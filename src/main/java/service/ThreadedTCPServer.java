@@ -35,6 +35,8 @@ public class ThreadedTCPServer {
             GenreDaoImpl genreDao = new GenreDaoImpl("database.properties");
             AlbumDaoImpl albumDao = new AlbumDaoImpl("database.properties");
             ReviewDaoImpl reviewDao = new ReviewDaoImpl("database.properties");
+            AlbumReviewDaoImpl albumReviewDao = new AlbumReviewDaoImpl("database.properties");
+            ArtistReviewDaoImpl artistReviewDao = new ArtistReviewDaoImpl("database.properties");
 
 
             String username = new String();
@@ -42,7 +44,7 @@ public class ThreadedTCPServer {
             boolean validServerSession = true;
             while(validServerSession){
                 Socket clientDataSocket = connectionSocket.accept();
-                TCPServer clientHandler = new TCPServer(clientDataSocket, userDao, artistDao, genreDao, albumDao, reviewDao, username);
+                TCPServer clientHandler = new TCPServer(clientDataSocket, userDao, artistDao, genreDao, albumDao, reviewDao, albumReviewDao, artistReviewDao , username);
                 clientHandlerPool.submit(clientHandler);
             }
         }catch (IOException e){

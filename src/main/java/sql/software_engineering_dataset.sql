@@ -23,11 +23,3 @@ VALUES (1, 'To Pimp A Butterfly', 1, 'Modern Day Classic', '2015-03-16'),
        (3, 'Electric Ladyland', 2, 'Some say the Greatest album ever', '1967-10-16'),
        (4, 'Illmatic', 3, 'Everything perfect about Hip Hop', '1994-04-10'),
        (5, 'Red', 4, 'Perfect Pop Album', '2012-10-10');
-
-
-INSERT INTO `review` (`username`, `album_id`, `rating`, `comment`)
-VALUES ('Toby', 1, 10, 'Love this album'),
-       ('Toby', 2, 9, 'Wonderful'),
-       ('Sean', 3, 10, 'Best ever'),
-       ('Sean', 4, 8, 'Great album'),
-       ('Sarah', 5, 9, 'Pop excellence');
