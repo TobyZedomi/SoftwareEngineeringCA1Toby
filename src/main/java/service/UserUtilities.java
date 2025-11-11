@@ -23,6 +23,27 @@ public class UserUtilities {
 
     public static final String ADD_REVIEW = "ADD_REVIEW";
 
+    public static final String ORDER_ARTIST_BY_NAME = "ORDER_ARTIST_BY_NAME";
+
+    public static final String GET_ALL_ALBUM_REVIEWS = "GET_ALL_ALBUM_REVIEWS";
+
+    public static final String GET_ALL_ALBUM_REVIEWS_FROM_USER = "GET_ALL_ALBUM_REVIEWS_FROM_USER";
+
+
+    public static final String NO_ARTIST_REVIEWS = "NO_ARTIST_REVIEWS";
+
+    public static final String ADD_ARTIST_REVIEW = "ADD_ARTIST_REVIEW";
+
+    public static final String REVIEW_OF_ARTIST_SUCCESSFULLY_SENT = "REVIEW_OF_ARTIST_SUCCESSFULLY_SENT";
+
+    public static final String REVIEW_ARTIST_ALREADY_EXIST = "REVIEW_ARTIST_ALREADY_EXIST";
+
+    public static final String GET_ALL_ARTIST_REVIEWS_FROM_USER = "GET_ALL_ARTIST_REVIEWS_FROM_USER";
+
+
+    public static final String GET_ALL_ARTIST_REVIEWS = "GET_ALL_ARTIST_REVIEWS";
+
+
     public static final String EXIT = "EXIT";
     public static final String LOGOUT = "LOGOUT";
 
@@ -81,7 +102,7 @@ public class UserUtilities {
 
     public static final String NON_NUMERIC_ID= "NON_NUMERIC_ID";
 
-
+    public static final String ALBUM_DOESNT_EXIST= "ALBUM_DOESNT_EXIST";
 
 
 
