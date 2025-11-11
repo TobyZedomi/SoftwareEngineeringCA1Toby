@@ -31,6 +31,9 @@ public class TCPGUIClient {
 
     static JFrame fViewSearchAlbum;
 
+    static JFrame fViewAlbumReview;
+
+
 
 
     //lists
@@ -88,12 +91,25 @@ public class TCPGUIClient {
 
     private JButton allArtist;
 
+    private JButton allAlbumReviews;
+
+    private JButton allArtistReviews;
+
+
+
     private JButton allAlbum;
 
 
     private JButton searchForArtist;
 
+    private JButton orderArtistByName;
+
+
     private JButton searchForAlbum;
+
+
+    private JButton getUserAlbumAlbumReview;
+
 
     private JButton searchForAlbumReview;
 
@@ -150,6 +166,14 @@ public class TCPGUIClient {
 
 
     private JTextField commentTextField;
+
+
+    private JLabel numberOfConcertsLabel;
+
+
+    private JTextField numberOfConcertsTextField;
+
+
 
 
     // search for emails based on subject
@@ -234,8 +258,8 @@ public class TCPGUIClient {
 
         configureRegisterView();
 
-
         configureAddReviewPanel();
+
 
 
     }
@@ -376,7 +400,7 @@ public class TCPGUIClient {
 
         // View All Artist in the system
 
-        allArtist = new JButton("View All Artist");
+        allArtist = new JButton("View All Artist's and Create Review For Any Artist");
         // Specify what the button should DO when clicked:
         allArtist.addActionListener(new ActionListener() {
             @Override
@@ -385,10 +409,29 @@ public class TCPGUIClient {
             }
         });
 
+        allArtistReviews = new JButton("View All Artist Reviews");
+        // Specify what the button should DO when clicked:
+        allArtistReviews.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                allArtistReviewsView();
+            }
+        });
+
+
+        getUserAlbumAlbumReview = new JButton("View Your Own Artist Review");
+        // Specify what the button should DO when clicked:
+        getUserAlbumAlbumReview.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewUserArtistReview();
+            }
+        });
+
 
         // View All Albums in the system
 
-        allAlbum = new JButton("View All Albums");
+        allAlbum = new JButton("View All Albums and Create Review For Any Album");
         // Specify what the button should DO when clicked:
         allAlbum.addActionListener(new ActionListener() {
             @Override
@@ -397,6 +440,26 @@ public class TCPGUIClient {
             }
         });
 
+
+        allAlbumReviews = new JButton("View All Album Reviews");
+        // Specify what the button should DO when clicked:
+        allAlbumReviews.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                allAlbumReviewsView();
+            }
+        });
+
+
+
+        getUserAlbumAlbumReview = new JButton("View Your Own Album Review");
+        // Specify what the button should DO when clicked:
+        getUserAlbumAlbumReview.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewUserAlbumReview();
+            }
+        });
 
         // logout
 
@@ -415,9 +478,18 @@ public class TCPGUIClient {
 
         homePageView.add(allArtist, getGridBagConstraints(0, 2, 2));
 
+
         homePageView.add(allAlbum, getGridBagConstraints(0, 3, 2));
 
-        homePageView.add(logOut, getGridBagConstraints(0, 4, 2));
+        homePageView.add(allAlbumReviews, getGridBagConstraints(0, 4, 2));
+
+        homePageView.add(getUserAlbumAlbumReview, getGridBagConstraints(0, 5, 2));
+
+        homePageView.add(allArtistReviews, getGridBagConstraints(0, 6, 2));
+
+
+
+        homePageView.add(logOut, getGridBagConstraints(0, 7, 2));
     }
 
     private void showInitialView(){
@@ -917,6 +989,13 @@ public class TCPGUIClient {
     }
 
 
+    private void goBackToHomePageEmailList3(){
+
+        fViewAlbumReview.dispose();
+        showHomePageView();
+    }
+
+
 
     private void goBackToArtistPageAfterSearch(){
 
@@ -1068,6 +1147,72 @@ public class TCPGUIClient {
             f.add(p);
             f.setSize(500,400);
 
+
+
+
+            albumReviewSearchLabel = new JLabel("Artist Id: ");
+            albumReviewSearchTextField = new JTextField(15);
+
+            ratingLabel = new JLabel("Rating: ");
+            ratingTextField = new JTextField(15);
+
+
+            commentLabel = new JLabel("Comment: ");
+            commentTextField = new JTextField(15);
+
+            numberOfConcertsLabel = new JLabel("Number Of Concerts Attended: ");
+            numberOfConcertsTextField = new JTextField(15);
+
+
+            // Create a button to log in user
+            completeReviewButton = new JButton("Complete Review");
+            // Specify what the button should DO when clicked:
+            completeReviewButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    addReviewForArtist();
+                }
+            });
+
+
+
+            p.add(albumReviewSearchLabel, getGridBagConstraints(0, 4, 1));
+            p.add(albumReviewSearchTextField, getGridBagConstraints(1, 4, 1));
+
+            p.add(ratingLabel, getGridBagConstraints(0, 5, 1));
+            p.add(ratingTextField, getGridBagConstraints(1, 5, 1));
+
+            p.add(commentLabel, getGridBagConstraints(0, 6, 1));
+            p.add(commentTextField, getGridBagConstraints(1, 6, 1));
+
+            p.add(numberOfConcertsLabel, getGridBagConstraints(0, 7, 1));
+            p.add(numberOfConcertsTextField, getGridBagConstraints(1, 7, 1));
+
+
+
+            // Add button on third row (y = 2) spanning two columns (width = 2)
+            p.add(completeReviewButton, getGridBagConstraints(0, 8, 2));
+
+            albumReviewSearchTextField.getText();
+            ratingTextField.getText();
+            commentTextField.getText();
+
+
+
+
+
+
+            orderArtistByName = new JButton("Order Artist By Name");
+            // Specify what the button should DO when clicked:
+            orderArtistByName.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    orderArtistByNameView();
+                }
+            });
+
+            p.add(orderArtistByName, getGridBagConstraints(0, 9, 2));
+
             goBackToHomePage = new JButton("Go Back To Home Page");
             // Specify what the button should DO when clicked:
             goBackToHomePage.addActionListener(new ActionListener() {
@@ -1077,7 +1222,7 @@ public class TCPGUIClient {
                 }
             });
 
-            p.add(goBackToHomePage, getGridBagConstraints(0, 4, 2));
+            p.add(goBackToHomePage, getGridBagConstraints(0, 10, 2));
 
 
             logOut = new JButton("Log Out");
@@ -1091,13 +1236,117 @@ public class TCPGUIClient {
 
 
 
-            p.add(logOut, getGridBagConstraints(0, 5, 2));
+            p.add(logOut, getGridBagConstraints(0, 11, 2));
             f.show();
 
         }
 
     }
 
+
+    private void orderArtistByNameView(){
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.ORDER_ARTIST_BY_NAME);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+
+        if (response.equalsIgnoreCase(AuthUtils.INVALID) || response.equalsIgnoreCase(AuthUtils.YOU_HAVE_NO_ARTISTS) || response.equalsIgnoreCase(AuthUtils.NOT_LOGGED_IN)){
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "Retrieve Artist failed",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        }else {
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("artists").getAsString();
+
+            String[] artists = result.split("##");
+
+            //create a new frame
+            f1 = new JFrame("frame");
+
+            //create a panel
+            JPanel p =new JPanel();
+
+            artistSearchLabel = new JLabel("Artist Name: ");
+            artistSearchTextField = new JTextField(15);
+
+            searchForArtist = new JButton("Search for Artist");
+            // Specify what the button should DO when clicked:
+            searchForArtist.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchForArtist();
+                }
+            });
+
+            p.add(artistSearchLabel, getGridBagConstraints(0, 1, 2));
+            p.add(artistSearchTextField, getGridBagConstraints(1, 1, 2));
+            p.add(searchForArtist, getGridBagConstraints(0, 2, 2));
+
+
+
+
+            artistListLabel = new JLabel("Artist listed in Alphabetical Order ");
+            p.add(artistListLabel, getGridBagConstraints(0, 3, 2));
+
+            String [] artistArray = grow(artists, artists.length);
+            b = new JList(artistArray);
+            b.setSelectedIndex(0);
+            p.add(b);
+            f1.add(p);
+            f1.setSize(500,400);
+
+            goBackToArtistPage = new JButton("Go Back To Artist Page");
+            // Specify what the button should DO when clicked:
+            goBackToArtistPage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToArtistPageAfterSearch();
+                }
+            });
+            p.add(goBackToArtistPage, getGridBagConstraints(0, 4, 2));
+
+
+            goBackToHomePage = new JButton("Go Back To Home Page");
+            // Specify what the button should DO when clicked:
+            goBackToHomePage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToHomePageEmailList();
+                }
+            });
+
+            p.add(goBackToHomePage, getGridBagConstraints(0, 5, 2));
+
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 6, 2));
+            f1.show();
+
+        }
+
+    }
 
     private void allAlbumView(){
 
@@ -1542,7 +1791,7 @@ public class TCPGUIClient {
             System.out.println(response);
             return;
 
-        }else if(response.equals(AuthUtils.NON_NUMERIC_ID) || response.equals(AuthUtils.INVALID) || response.equals(AuthUtils.REVIEW_ALREADY_EXIST) || response.equals(AuthUtils.NOT_LOGGED_IN) || response.equals(AuthUtils.RATING_OVER)){
+        }else if(response.equals(AuthUtils.NON_NUMERIC_ID) || response.equals(AuthUtils.INVALID) || response.equals(AuthUtils.REVIEW_ALREADY_EXIST) || response.equals(AuthUtils.NOT_LOGGED_IN) || response.equals(AuthUtils.RATING_OVER) || response.equals(AuthUtils.ALBUM_DOESNT_EXIST)){
 
             JOptionPane.showMessageDialog(initialView, result, "Sent email failed",
                     JOptionPane.ERROR_MESSAGE);
@@ -1551,6 +1800,452 @@ public class TCPGUIClient {
 
 
     }
+
+
+
+    ///////// album reviews
+
+
+    private void allAlbumReviewsView(){
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.GET_ALL_ALBUM_REVIEWS);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+
+        if (response.equalsIgnoreCase(AuthUtils.INVALID) || response.equalsIgnoreCase(AuthUtils.YOU_HAVE_NO_ALBUMS) || response.equalsIgnoreCase(AuthUtils.NOT_LOGGED_IN)){
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "Retrieve Albums failed",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        }else {
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("reviews").getAsString();
+
+            String[] artists = result.split("##");
+
+            //create a new frame
+            fViewAlbumReview = new JFrame("frame");
+
+            //create a panel
+            JPanel p =new JPanel();
+
+            albumSearchLabel = new JLabel("Album Name: ");
+            albumSearchTextField = new JTextField(15);
+
+            searchForAlbum = new JButton("Search for Album");
+            // Specify what the button should DO when clicked:
+            searchForAlbum.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchForAlbum();
+                }
+            });
+
+
+
+            artistListLabel = new JLabel("List of all Album Reviews in the system");
+            p.add(artistListLabel, getGridBagConstraints(0, 3, 2));
+
+            String [] artistArray = grow(artists, artists.length);
+            b = new JList(artistArray);
+            b.setSelectedIndex(0);
+            p.add(b);
+            fViewAlbumReview.add(p);
+            fViewAlbumReview.setSize(500,400);
+            // go review album here
+
+
+
+            goBackToHomePage = new JButton("Go Back To Home Page");
+            // Specify what the button should DO when clicked:
+            goBackToHomePage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToHomePageEmailList3();
+                }
+            });
+
+            p.add(goBackToHomePage, getGridBagConstraints(0, 4, 2));
+
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 5, 2));
+            fViewAlbumReview.show();
+
+        }
+
+    }
+
+
+    private void viewUserAlbumReview(){
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.GET_ALL_ALBUM_REVIEWS_FROM_USER);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+
+        if (response.equalsIgnoreCase(AuthUtils.INVALID) || response.equalsIgnoreCase(AuthUtils.YOU_HAVE_NO_ALBUMS) || response.equalsIgnoreCase(AuthUtils.NOT_LOGGED_IN)){
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "Retrieve Albums failed",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        }else {
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("reviews").getAsString();
+
+            String[] artists = result.split("##");
+
+            //create a new frame
+            fViewAlbumReview = new JFrame("frame");
+
+            //create a panel
+            JPanel p =new JPanel();
+
+            albumSearchLabel = new JLabel("Album Name: ");
+            albumSearchTextField = new JTextField(15);
+
+            searchForAlbum = new JButton("Search for Album");
+            // Specify what the button should DO when clicked:
+            searchForAlbum.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchForAlbum();
+                }
+            });
+
+
+
+            artistListLabel = new JLabel("List of all Your Album Reviews");
+            p.add(artistListLabel, getGridBagConstraints(0, 3, 2));
+
+            String [] artistArray = grow(artists, artists.length);
+            b = new JList(artistArray);
+            b.setSelectedIndex(0);
+            p.add(b);
+            fViewAlbumReview.add(p);
+            fViewAlbumReview.setSize(500,400);
+            // go review album here
+
+
+
+            goBackToHomePage = new JButton("Go Back To Home Page");
+            // Specify what the button should DO when clicked:
+            goBackToHomePage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToHomePageEmailList3();
+                }
+            });
+
+            p.add(goBackToHomePage, getGridBagConstraints(0, 4, 2));
+
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 5, 2));
+            fViewAlbumReview.show();
+
+        }
+
+    }
+
+
+
+    /// all artist reviewes
+
+
+    private void addReviewForArtist(){
+
+        String albumId = albumReviewSearchTextField.getText();
+        String rating = ratingTextField.getText();
+        String comment = commentTextField.getText();
+        String numberOfConcerts = numberOfConcertsTextField.getText();
+
+
+
+        JsonObject payload = new JsonObject();
+        payload.addProperty("artist", albumId);
+        payload.addProperty("rating", rating);
+        payload.addProperty("comment", comment);
+        payload.addProperty("numOfConcerts", numberOfConcerts);
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.ADD_ARTIST_REVIEW);
+        requestJson.add("payload", payload);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+        // formatting it nice for the user
+        JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+        String result = jsonResponse.get("message").getAsString();
+
+        if (response.equalsIgnoreCase(AuthUtils.REVIEW_OF_ARTIST_SUCCESSFULLY_SENT) ) {
+
+            JOptionPane.showMessageDialog(initialView, result, "Sent artist review Successful",
+                    JOptionPane.INFORMATION_MESSAGE);
+            //mainFrame.remove(sendAlbumReviewView);
+            //showHomePageView();
+
+            log.info("User reviewed album with id {}", albumId);
+
+
+            albumReviewSearchTextField.setText("");
+            ratingTextField.setText("");
+            commentTextField.setText("");
+            numberOfConcertsTextField.setText("");
+
+
+            System.out.println(response);
+            return;
+
+        }else if(response.equals(AuthUtils.NON_NUMERIC_ID) || response.equals(AuthUtils.INVALID) || response.equals(AuthUtils.REVIEW_ARTIST_ALREADY_EXIST) || response.equals(AuthUtils.NOT_LOGGED_IN) || response.equals(AuthUtils.RATING_OVER) || response.equals(AuthUtils.ALBUM_DOESNT_EXIST)){
+
+            JOptionPane.showMessageDialog(initialView, result, "Sent artist review failed",
+                    JOptionPane.ERROR_MESSAGE);
+            log.info("User already reviewed album {}", albumReviewSearchTextField.getText());
+        }
+
+
+    }
+
+
+
+
+
+
+    private void allArtistReviewsView(){
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.GET_ALL_ARTIST_REVIEWS);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+
+        if (response.equalsIgnoreCase(AuthUtils.INVALID) || response.equalsIgnoreCase(AuthUtils.NO_ARTIST_REVIEWS) || response.equalsIgnoreCase(AuthUtils.NOT_LOGGED_IN)){
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "Retrieve Artist failed",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        }else {
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("reviews").getAsString();
+
+            String[] artists = result.split("##");
+
+            //create a new frame
+            f = new JFrame("frame");
+
+            //create a panel
+            JPanel p =new JPanel();
+
+            artistSearchLabel = new JLabel("Artist Name: ");
+            artistSearchTextField = new JTextField(15);
+
+            searchForArtist = new JButton("Search for Artist");
+            // Specify what the button should DO when clicked:
+            searchForArtist.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchForArtist();
+                }
+            });
+
+            p.add(artistSearchLabel, getGridBagConstraints(0, 1, 2));
+            p.add(artistSearchTextField, getGridBagConstraints(1, 1, 2));
+            p.add(searchForArtist, getGridBagConstraints(0, 2, 2));
+
+
+            artistListLabel = new JLabel("All artist reviews in the system");
+            p.add(artistListLabel, getGridBagConstraints(0, 3, 2));
+
+            String [] artistArray = grow(artists, artists.length);
+            b = new JList(artistArray);
+            b.setSelectedIndex(0);
+            p.add(b);
+            f.add(p);
+            f.setSize(500,400);
+
+            goBackToHomePage = new JButton("Go Back To Home Page");
+            // Specify what the button should DO when clicked:
+            goBackToHomePage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToHomePageEmailList();
+                }
+            });
+
+            p.add(goBackToHomePage, getGridBagConstraints(0, 5, 2));
+
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 6, 2));
+            f.show();
+
+        }
+
+    }
+
+
+
+
+
+
+    private void viewUserArtistReview(){
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.GET_ALL_ARTIST_REVIEWS_FROM_USER);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        // Wait to receive a response to the authentication request
+        String response = network.receive();
+
+
+        if (response.equalsIgnoreCase(AuthUtils.INVALID) || response.equalsIgnoreCase(AuthUtils.NO_ARTIST_REVIEWS) || response.equalsIgnoreCase(AuthUtils.NOT_LOGGED_IN)){
+
+            JsonObject jsonResponse1 = gson.fromJson(response, JsonObject.class);
+            String result1 = jsonResponse1.get("message").getAsString();
+
+            JOptionPane.showMessageDialog(initialView, result1, "Retrieve Artist failed",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        }else {
+            JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+            String result = jsonResponse.get("reviews").getAsString();
+
+            String[] artists = result.split("##");
+
+            //create a new frame
+            f = new JFrame("frame");
+
+            //create a panel
+            JPanel p =new JPanel();
+
+            artistSearchLabel = new JLabel("Artist Name: ");
+            artistSearchTextField = new JTextField(15);
+
+            searchForArtist = new JButton("Search for Artist");
+            // Specify what the button should DO when clicked:
+            searchForArtist.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    searchForArtist();
+                }
+            });
+
+            p.add(artistSearchLabel, getGridBagConstraints(0, 1, 2));
+            p.add(artistSearchTextField, getGridBagConstraints(1, 1, 2));
+            p.add(searchForArtist, getGridBagConstraints(0, 2, 2));
+
+
+            artistListLabel = new JLabel("All Your artist reviews in the system");
+            p.add(artistListLabel, getGridBagConstraints(0, 3, 2));
+
+            String [] artistArray = grow(artists, artists.length);
+            b = new JList(artistArray);
+            b.setSelectedIndex(0);
+            p.add(b);
+            f.add(p);
+            f.setSize(500,400);
+
+            goBackToHomePage = new JButton("Go Back To Home Page");
+            // Specify what the button should DO when clicked:
+            goBackToHomePage.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    goBackToHomePageEmailList();
+                }
+            });
+
+            p.add(goBackToHomePage, getGridBagConstraints(0, 5, 2));
+
+
+            logOut = new JButton("Log Out");
+            // Specify what the button should DO when clicked:
+            logOut.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    logOutUser();
+                }
+            });
+
+
+
+            p.add(logOut, getGridBagConstraints(0, 6, 2));
+            f.show();
+
+        }
+
+    }
+
 
 
     private void setStandardFonts(){

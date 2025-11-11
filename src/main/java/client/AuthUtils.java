@@ -18,6 +18,16 @@ public class AuthUtils {
     public static final String SEARCH_FOR_ARTIST = "SEARCH_FOR_ARTIST";
 
     public static final String GET_ALL_ALBUM = "GET_ALL_ALBUM";
+    public static final String ORDER_ARTIST_BY_NAME = "ORDER_ARTIST_BY_NAME";
+
+    public static final String GET_ALL_ALBUM_REVIEWS = "GET_ALL_ALBUM_REVIEWS";
+
+
+
+    public static final String GET_ALL_ALBUM_REVIEWS_FROM_USER = "GET_ALL_ALBUM_REVIEWS_FROM_USER";
+
+    public static final String GET_ALL_ARTIST_REVIEWS = "GET_ALL_ARTIST_REVIEWS";
+
 
     public static final String SEARCH_FOR_ALBUM = "SEARCH_FOR_ALBUM";
 
@@ -32,6 +42,12 @@ public class AuthUtils {
 
     public static final String GET_SENT_EMAIL_BY_ID = "GET_SENT_EMAIL_BY_ID";
 
+    public static final String GET_ALL_ARTIST_REVIEWS_FROM_USER = "GET_ALL_ARTIST_REVIEWS_FROM_USER";
+
+
+    public static final String ADD_ARTIST_REVIEW = "ADD_ARTIST_REVIEW";
+
+
     public static final String LOGOUT = "LOGOUT";
 
     public static final String EXIT = "EXIT";
@@ -40,6 +56,9 @@ public class AuthUtils {
     // RESPONSES
 
     public static final String REVIEW_OF_ALBUM_SUCCESSFULLY_SENT = "{\"status\":\"REVIEW_OF_ALBUM_SUCCESSFULLY_SENT\",\"message\":\"Album review Successfully sent\"}";
+
+    public static final String REVIEW_OF_ARTIST_SUCCESSFULLY_SENT = "{\"status\":\"REVIEW_OF_ARTIST_SUCCESSFULLY_SENT\",\"message\":\"Artist review Successfully sent\"}";
+
     public static final String GOODBYE = "{\"status\":\"GOODBYE\",\"message\":\"Goodbye\"}";
     public static final String LOGIN_SUCCESSFUL = "{\"status\":\"LOGIN_SUCCESSFUL\",\"message\":\"Login Successful\"}";
     public static final String NO_ARTISTS_WITH_THIS_NAME = "{\"status\":\"NO_ARTISTS_WITH_THIS_NAME\",\"message\":\"No artist found\"}";
@@ -66,9 +85,15 @@ public class AuthUtils {
     public static final String REVIEW_ALREADY_EXIST =   "{\"status\":\"REVIEW_ALREADY_EXIST\",\"message\":\"Review already exist\"}";
 
 
-    public static final String RATING_OVER =   "{\"status\":\"RATING_OVER\",\"message\":\"Rating must be 10 or lower\"}";
+    public static final String RATING_OVER =   "{\"status\":\"RATING_OVER\",\"message\":\"Rating must be between 0 - 10\"}";
 
 
+    public static final String ALBUM_DOESNT_EXIST =   "{\"status\":\"ALBUM_DOESNT_EXIST\",\"message\":\"Album doesnt exist\"}";
+
+    public static final String NO_ARTIST_REVIEWS =   "{\"status\":\"NO_ARTIST_REVIEWS\",\"message\":\"There is no artist reviews\"}";
+
+
+    public static final String REVIEW_ARTIST_ALREADY_EXIST =   "{\"status\":\"REVIEW_ARTIST_ALREADY_EXIST\",\"message\":\"Review artist already exist\"}";
 
 
     /// Delimiter
