@@ -47,6 +47,11 @@ public class AuthUtils {
 
     public static final String ADD_ARTIST_REVIEW = "ADD_ARTIST_REVIEW";
 
+    public static final String OBSERVER = "OBSERVER";
+
+    public static final String NOTI_SUCCESS= "NOTI_SUCCESS";
+
+
 
     public static final String LOGOUT = "LOGOUT";
 
