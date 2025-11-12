@@ -47,6 +47,9 @@ public class UserUtilities {
     public static final String EXIT = "EXIT";
     public static final String LOGOUT = "LOGOUT";
 
+    public static final String OBSERVER = "OBSERVER";
+
+
 
     //RESPONSES
 
@@ -103,6 +106,8 @@ public class UserUtilities {
     public static final String NON_NUMERIC_ID= "NON_NUMERIC_ID";
 
     public static final String ALBUM_DOESNT_EXIST= "ALBUM_DOESNT_EXIST";
+
+    public static final String NOTI_SUCCESS= "NOTI_SUCCESS";
 
 
 

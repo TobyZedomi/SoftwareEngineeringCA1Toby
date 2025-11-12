@@ -2,6 +2,9 @@ package model;
 
 
 import lombok.*;
+import observer.Observer;
+
+import java.util.ArrayList;
 
 @Getter
 @Setter

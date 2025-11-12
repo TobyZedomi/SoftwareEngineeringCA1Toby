@@ -2,6 +2,7 @@ package persistence;
 
 import model.AlbumReview;
 import model.Review;
+import observer.Observer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,6 +22,9 @@ public class AlbumReviewDaoImpl extends MySQLDao implements IAlbumReviewDao {
     }
 
 
+    private final ArrayList<Observer> observers = new ArrayList();
+
+
 
     @Override
     public int addAlbumReview(int reviewId, int albumId){
@@ -30,6 +34,9 @@ public class AlbumReviewDaoImpl extends MySQLDao implements IAlbumReviewDao {
         // Remember, where you are NOT doing a select, you will only ever get
         // a number indicating how many things were changed/affected
         int rowsAffected = 0;
+
+        boolean notify = false;
+
 
         Connection conn = super.getConnection();
 
@@ -47,6 +54,8 @@ public class AlbumReviewDaoImpl extends MySQLDao implements IAlbumReviewDao {
             // Execute the update and store how many rows were affected/changed
             // when inserting, this number indicates if the row was
             // added to the database (>0 means it was added)
+
+            notify = true;
             rowsAffected = ps.executeUpdate();
 
         }// Add an extra exception handling block for where there is already an entry
@@ -61,10 +70,53 @@ public class AlbumReviewDaoImpl extends MySQLDao implements IAlbumReviewDao {
             e.printStackTrace();
         }
 
+        if(notify){
+            notifyObservers();
+        }
+
         return rowsAffected;
     }
 
+    public boolean register(Observer o)
+    {
+        synchronized(observers){
+            // If the observer to be added to the list exists
+            // and isn't already present in the list
+            if(o != null && !observers.contains(o)){
+                // Add the new observer
+                observers.add(o);
+               // System.out.println("Adding observer " + o.toString() + " to list of observers for " + album_id + ".");
+                return true;
+            }
+            return false;
+        }
+    }
 
+    public synchronized boolean unregister(Observer o)
+    {
+        synchronized(observers){
+            // If the observer being removed from the list exists
+            // and could be successfully removed
+            if(o!= null && observers.remove(o))
+            {
+               // System.out.println("Removed observer " + o.toString() + " from list of observers for " + album_id + ".");
+                return true;
+            }
+            return false;
+        }
+    }
+
+    private void notifyObservers()
+    {
+        synchronized(observers){
+            // For each observer in the list, call their update method to notify them
+            // that something has changed
+            observers.stream().forEach((o) ->
+            {
+                o.update(this);
+            });
+        }
+    }
 
 
     @Override

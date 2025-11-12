@@ -110,6 +110,7 @@ public class TCPGUIClient {
 
     private JButton getUserAlbumAlbumReview;
 
+    private JButton observerNoti;
 
     private JButton searchForAlbumReview;
 
@@ -206,6 +207,10 @@ public class TCPGUIClient {
     private JLabel idLabel;
 
     private JTextField idTextField;
+
+    private JLabel observeLabel;
+
+    private JTextField observeTextField;
 
 
     // get content of sent emails
@@ -461,6 +466,19 @@ public class TCPGUIClient {
             }
         });
 
+
+        observeLabel = new JLabel("Do you want notifications for album reviews: ");
+        observeTextField = new JTextField(15);
+
+        observerNoti = new JButton("Turn on Notifications");
+        // Specify what the button should DO when clicked:
+        observerNoti.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                viewObserverNoti();
+            }
+        });
+
         // logout
 
         logOut = new JButton("Log Out");
@@ -487,9 +505,13 @@ public class TCPGUIClient {
 
         homePageView.add(allArtistReviews, getGridBagConstraints(0, 6, 2));
 
+        homePageView.add(observeLabel, getGridBagConstraints(0, 7, 2));
 
+        homePageView.add(observeTextField, getGridBagConstraints(0, 8, 2));
 
-        homePageView.add(logOut, getGridBagConstraints(0, 7, 2));
+        homePageView.add(observerNoti, getGridBagConstraints(0, 9, 2));
+
+        homePageView.add(logOut, getGridBagConstraints(0, 10, 2));
     }
 
     private void showInitialView(){
@@ -2247,6 +2269,54 @@ public class TCPGUIClient {
     }
 
 
+
+
+
+    private void viewObserverNoti() {
+        String observe = observeTextField.getText();
+
+        JsonObject payload = new JsonObject();
+        payload.addProperty("observe", observe);
+
+        // Create the overall request object
+        JsonObject requestJson = new JsonObject();
+        // Add the request type/action and payload
+        requestJson.addProperty("action", AuthUtils.OBSERVER);
+        requestJson.add("payload", payload);
+
+        String request = gson.toJson(requestJson);
+        network.send(request);
+
+        String response = network.receive();
+
+        System.out.println(response);
+
+        JsonObject jsonResponse = gson.fromJson(response, JsonObject.class);
+        String result = jsonResponse.get("message").getAsString();
+
+        // If the response matches the expected success message, treat user as authenticated
+        if (response.equals(AuthUtils.NOTI_SUCCESS)) {
+            JOptionPane.showMessageDialog(initialView, result, "Login Successful",
+                    JOptionPane.INFORMATION_MESSAGE);
+            mainFrame.remove(initialView);
+            showHomePageView();
+
+            log.info("User {} logged in", observe);
+
+            usernameField.setText("");
+            passwordField.setText("");
+
+            return;
+        }
+
+        JOptionPane.showMessageDialog(initialView, result, "Login Failed",
+                JOptionPane.ERROR_MESSAGE);
+
+        log.info("User {} failed logged in", observe);
+
+
+
+    }
 
     private void setStandardFonts(){
         UIManager.put("Label.font", font);
